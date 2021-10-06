@@ -15,7 +15,7 @@ mongoose.connect(process.env.MONGO_URL, () => {
 });
 
 const app = express();
-const port = 3001 || process.env.PORT;
+const port = process.env.PORT || 3001;
 
 //middlewares
 app.use(express.json());
