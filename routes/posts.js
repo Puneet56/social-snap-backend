@@ -84,14 +84,26 @@ router.get('/:postId', async (req, res) => {
 
 //get timeline posts
 
-router.post('/timeline', async (req, res) => {
+router.get('/timeline/:userId', async (req, res) => {
 	try {
-		const currentUser = await User.findById(req.body.userId);
-		const currentUserPost = await Post.find({ userId: req.body.userId });
+		const currentUser = await User.findById(req.params.userId);
+		const currentUserPost = await Post.find({ userId: req.params.userId });
 		const followingPost = await Promise.all(
 			currentUser.following.map((friendId) => Post.find({ userId: friendId }))
 		);
 		res.json(currentUserPost.concat(...followingPost));
+	} catch (error) {
+		console.log(error);
+		res.send('some error occoured');
+	}
+});
+
+//get user posts
+
+router.get('/posts/:userId', async (req, res) => {
+	try {
+		const currentUserPost = await Post.find({ userId: req.params.userId });
+		res.json(currentUserPost);
 	} catch (error) {
 		console.log(error);
 		res.send('some error occoured');
