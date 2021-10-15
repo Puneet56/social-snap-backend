@@ -33,7 +33,6 @@ router.post('/login', async (req, res) => {
 		);
 
 		!isPassowrdCorrect && res.send('Wrong password');
-
 		res.json(requestedUser);
 	} catch (error) {
 		res.send('some error occured');
