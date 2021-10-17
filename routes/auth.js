@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const router = require('express').Router();
 const User = require('../models/User');
 
+const jwt = require('jsonwebtoken');
+
 router.post('/register', async (req, res) => {
 	try {
 		const salt = await bcrypt.genSalt(10);
@@ -13,9 +15,11 @@ router.post('/register', async (req, res) => {
 			email: req.body.email,
 			password: hashedPassword,
 		});
-
 		await newUser.save();
-		res.status(200).json(newUser);
+		const token = jwt.sign(newUser.id, process.env.JWT_SECRET);
+		const details = { user: newUser._doc, token: token };
+
+		res.status(200).json(details);
 	} catch (error) {
 		console.log(error);
 		res.send('error adding user');
@@ -33,9 +37,24 @@ router.post('/login', async (req, res) => {
 		);
 
 		!isPassowrdCorrect && res.send('Wrong password');
-		res.json(requestedUser);
+		const token = jwt.sign(requestedUser.id, process.env.JWT_SECRET);
+		const details = { user: requestedUser._doc, token: token };
+		res.json(details);
 	} catch (error) {
 		res.send('some error occured');
+	}
+});
+
+router.get('/verify', (req, res) => {
+	const token = req.headers.authorization;
+	console.log(req.headers);
+	console.log(token);
+	try {
+		const verified = jwt.verify(token, process.env.JWT_SECRET);
+		res.send(verified);
+	} catch (error) {
+		console.log(error);
+		res.send(error);
 	}
 });
 
