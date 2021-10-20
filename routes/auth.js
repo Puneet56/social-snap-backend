@@ -12,13 +12,18 @@ router.post('/register', async (req, res) => {
 
 		const newUser = await new User({
 			username: req.body.username,
+			profilePicture: `https://avatars.dicebear.com/api/gridy/${
+				req.body.email.split('@')[0]
+			}.svg`,
+			coverPicture: `http://source.unsplash.com/300x175/?nature,mountains`,
 			email: req.body.email,
 			password: hashedPassword,
+			hometown: req.body.hometown || ' ',
+			dob: req.body.dob || ' ',
 		});
 		await newUser.save();
 		const token = jwt.sign(newUser.id, process.env.JWT_SECRET);
 		const details = { user: newUser._doc, token: token };
-
 		res.status(200).json(details);
 	} catch (error) {
 		console.log(error);

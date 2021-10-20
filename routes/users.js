@@ -20,6 +20,7 @@ router.get('/all', async (req, res) => {
 //update user
 router.put('/:id', async (req, res) => {
 	if (req.body.userId === req.params.id || req.body.isAdmin) {
+		console.log('Recieved request');
 		if (req.body.password) {
 			try {
 				const salt = await bcrypt.genSalt(10);
@@ -39,6 +40,7 @@ router.put('/:id', async (req, res) => {
 			res.json(error);
 		}
 	} else {
+		console.log('bad req');
 		res.send('access denied');
 	}
 });

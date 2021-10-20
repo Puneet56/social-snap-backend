@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema(
 		},
 		coverPicture: {
 			type: String,
-			default: '',
+			default: 'http://source.unsplash.com/350x150/?nature',
 		},
 		followers: {
 			type: Array,
@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
 		},
 		following: {
 			type: Array,
-			default: [],
+			default: ['616d263dfef11cda511c3ea1'],
 		},
 		isAdmin: {
 			type: Boolean,
@@ -46,6 +46,11 @@ const UserSchema = new mongoose.Schema(
 		},
 		hometown: {
 			type: String,
+			default: '',
+		},
+
+		dob: {
+			type: Date,
 			default: '',
 		},
 	},

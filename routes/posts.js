@@ -55,14 +55,18 @@ router.put('/:postId/like', async (req, res) => {
 		const post = await Post.findById(req.params.postId);
 		if (!post.likes.includes(req.body.userId)) {
 			await post.updateOne({ $push: { likes: req.body.userId } });
-			res.send('Post liked');
+			res
+				.status(200)
+				.json({ likes: post._doc.likes.length + 1, message: 'post liked' });
 		} else {
 			await post.updateOne({ $pull: { likes: req.body.userId } });
-			res.send('Post unliked');
+			res
+				.status(200)
+				.json({ likes: post._doc.likes.length - 1, message: 'post unliked' });
 		}
 	} catch (error) {
 		console.log(error);
-		res.send('some error occoured');
+		res.status(500).send('some error occoured');
 	}
 });
 
