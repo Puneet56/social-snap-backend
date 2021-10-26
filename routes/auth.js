@@ -50,6 +50,19 @@ router.post('/login', async (req, res) => {
 	}
 });
 
+router.get('/guest', async (req, res) => {
+	try {
+		const user = await User.findById('61732ba1861997195afcb168');
+		const { password, updatedAt, ...others } = user._doc;
+		const token = jwt.sign(user.id, process.env.JWT_SECRET);
+		const details = { user: others, token: token };
+		res.status(200).json(details);
+	} catch (error) {
+		console.log(error);
+		res.send('some error occured');
+	}
+});
+
 router.get('/verify', (req, res) => {
 	const token = req.headers.authorization;
 	console.log(req.headers);

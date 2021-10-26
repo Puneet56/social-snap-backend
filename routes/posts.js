@@ -5,13 +5,12 @@ const User = require('../models/User');
 //create a post
 router.post('/', async (req, res) => {
 	const post = new Post(req.body);
-
 	try {
 		const savedPost = await post.save();
-		res.json(savedPost);
+		res.status(200).json(savedPost);
 	} catch (error) {
 		console.log(error);
-		res.send('some error occured');
+		res.status(500).send('some error occured');
 	}
 });
 
