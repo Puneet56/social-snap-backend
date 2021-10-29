@@ -21,13 +21,13 @@ router.put('/:postId', async (req, res) => {
 		if (req.body.userId === post.userId) {
 			await post.updateOne({ $set: req.body });
 			const updatedPost = await Post.findById(req.params.postId);
-			res.json(updatedPost);
+			res.status(200).json(updatedPost);
 		} else {
-			res.send('You can only update your post');
+			res.status(403).send('You can only update your post');
 		}
 	} catch (error) {
 		console.log(error);
-		res.send('some error occoured');
+		res.status(500).send('some error occoured');
 	}
 });
 
@@ -75,7 +75,6 @@ router.put('/:postId/like', async (req, res) => {
 });
 
 //get a post
-
 router.get('/:postId', async (req, res) => {
 	try {
 		const post = await Post.findOne({ _id: req.params.postId });
