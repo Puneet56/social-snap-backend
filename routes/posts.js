@@ -53,7 +53,6 @@ router.put('/:postId/delete', async (req, res) => {
 });
 
 //like/unlike a post
-
 router.put('/:postId/like', async (req, res) => {
 	try {
 		const post = await Post.findById(req.params.postId);
