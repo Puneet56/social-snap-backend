@@ -1,6 +1,62 @@
 const router = require('express').Router();
 const Post = require('../models/Post');
 const User = require('../models/User');
+const isAuth = require('../middleware/isAuth');
+
+//get a post
+router.get('/:postId', async (req, res) => {
+	try {
+		const post = await Post.findOne({ _id: req.params.postId });
+		if (post) {
+			res.json(post);
+		} else {
+			res.send('No post found');
+		}
+	} catch (error) {
+		console.log(error);
+		res.send('error');
+	}
+});
+
+//get timeline posts
+router.get('/timeline/:userId', async (req, res) => {
+	const page = req.query.page;
+
+	try {
+		const currentUser = await User.findById(req.params.userId);
+		const currentUserPost = await Post.find({ userId: req.params.userId });
+		const followingPost = await Promise.all(
+			currentUser.following.map((friendId) => Post.find({ userId: friendId }))
+		);
+		res.json(
+			currentUserPost
+				.concat(...followingPost)
+				.sort((a, b) => b._doc.createdAt - a._doc.createdAt)
+				.slice((page - 1) * 5, page * 5)
+		);
+	} catch (error) {
+		console.log(error);
+		res.send('some error occoured');
+	}
+});
+
+//get user posts
+router.get('/posts/:userId', async (req, res) => {
+	const page = req.query.page;
+	try {
+		const currentUserPost = await Post.find({ userId: req.params.userId });
+		res.json(
+			currentUserPost
+				.sort((a, b) => b._doc.createdAt - a._doc.createdAt)
+				.slice((page - 1) * 5, page * 5)
+		);
+	} catch (error) {
+		console.log(error);
+		res.send('some error occoured');
+	}
+});
+
+router.use(isAuth);
 
 //create a post
 router.post('/', async (req, res) => {
@@ -70,59 +126,6 @@ router.put('/:postId/like', async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.status(500).send('some error occoured');
-	}
-});
-
-//get a post
-router.get('/:postId', async (req, res) => {
-	try {
-		const post = await Post.findOne({ _id: req.params.postId });
-		if (post) {
-			res.json(post);
-		} else {
-			res.send('No post found');
-		}
-	} catch (error) {
-		console.log(error);
-		res.send('error');
-	}
-});
-
-//get timeline posts
-router.get('/timeline/:userId', async (req, res) => {
-	const page = req.query.page;
-
-	try {
-		const currentUser = await User.findById(req.params.userId);
-		const currentUserPost = await Post.find({ userId: req.params.userId });
-		const followingPost = await Promise.all(
-			currentUser.following.map((friendId) => Post.find({ userId: friendId }))
-		);
-		res.json(
-			currentUserPost
-				.concat(...followingPost)
-				.sort((a, b) => b._doc.createdAt - a._doc.createdAt)
-				.slice((page - 1) * 5, page * 5)
-		);
-	} catch (error) {
-		console.log(error);
-		res.send('some error occoured');
-	}
-});
-
-//get user posts
-router.get('/posts/:userId', async (req, res) => {
-	const page = req.query.page;
-	try {
-		const currentUserPost = await Post.find({ userId: req.params.userId });
-		res.json(
-			currentUserPost
-				.sort((a, b) => b._doc.createdAt - a._doc.createdAt)
-				.slice((page - 1) * 5, page * 5)
-		);
-	} catch (error) {
-		console.log(error);
-		res.send('some error occoured');
 	}
 });
 

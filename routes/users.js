@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
-
 const router = require('express').Router();
 const User = require('../models/User');
+const isAuth = require('../middleware/isAuth');
 
 //get all users
 router.get('/all', async (req, res) => {
@@ -17,9 +17,23 @@ router.get('/all', async (req, res) => {
 	}
 });
 
+//get a user
+router.get('/:id', async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id);
+		const { password, updatedAt, ...others } = user._doc;
+		res.json(others);
+	} catch (error) {
+		console.log(error);
+		res.send('some error occured');
+	}
+});
+
+router.use(isAuth);
+
 //update user
 router.put('/:id', async (req, res) => {
-	if (req.body.userId === req.params.id || req.body.isAdmin) {
+	if (req.body.userId === req.params.id) {
 		console.log('Recieved request');
 		if (req.body.password) {
 			try {
@@ -46,7 +60,7 @@ router.put('/:id', async (req, res) => {
 });
 //delete user
 router.delete('/:id', async (req, res) => {
-	if (req.body.userId === req.params.id || req.body.isAdmin) {
+	if (req.body.userId === req.params.id) {
 		try {
 			const user = await User.findByIdAndDelete(req.body.userId);
 			res.send('Account deleted sucessfully');
@@ -56,18 +70,6 @@ router.delete('/:id', async (req, res) => {
 		}
 	} else {
 		res.send('You can only delete your account');
-	}
-});
-
-//get a user
-router.get('/:id', async (req, res) => {
-	try {
-		const user = await User.findById(req.params.id);
-		const { password, updatedAt, ...others } = user._doc;
-		res.json(others);
-	} catch (error) {
-		console.log(error);
-		res.send('some error occured');
 	}
 });
 
