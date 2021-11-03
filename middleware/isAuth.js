@@ -15,13 +15,11 @@ const isAuth = (req, res, next) => {
 			next();
 		} else {
 			console.log('unverified');
-			// res.status(403).send('Unauthorized');
-			next();
+			res.status(403).send('Unauthorized');
 		}
 	} catch (error) {
 		console.log('some error');
-		// res.status(500).send('Some error occoured');
-		next();
+		res.status(500).send('Some error occoured');
 	}
 };
 
