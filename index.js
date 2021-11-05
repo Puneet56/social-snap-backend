@@ -12,12 +12,13 @@ const app = express();
 // app.set('trust proxy', 1);
 
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 200, // limit each IP to 100 requests per windowMs
+	windowMs: 5 * 60 * 1000, // 5 minutes
+	max: 500, // limit each IP to 500 requests per windowMs
 });
 
 //  apply to all requests
 app.use(limiter);
+// app.set('trust proxy', 1);
 
 const userRoute = require('./routes/users');
 const authRoute = require('./routes/auth');
