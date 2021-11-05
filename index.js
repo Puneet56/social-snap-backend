@@ -11,13 +11,13 @@ const app = express();
 // see https://expressjs.com/en/guide/behind-proxies.html
 // app.set('trust proxy', 1);
 
-const limiter = rateLimit({
-	windowMs: 5 * 60 * 1000, // 5 minutes
-	max: 500, // limit each IP to 500 requests per windowMs
-});
+// const limiter = rateLimit({
+// 	windowMs: 5 * 60 * 1000, // 5 minutes
+// 	max: 500, // limit each IP to 500 requests per windowMs
+// });
 
 //  apply to all requests
-app.use(limiter);
+// app.use(limiter);
 // app.set('trust proxy', 1);
 
 const userRoute = require('./routes/users');
